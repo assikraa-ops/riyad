@@ -39,8 +39,6 @@
   <body>
     <div class="container-lg px-3 my-5 markdown-body">
       
-<html lang="id">
-<head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -366,16 +364,16 @@
       popup.style.cursor = 'pointer';
 
       // iframe must be inside a string/template literal
-      popup.innerHTML = `
-        <div style="width:90%; max-width:1100px; height:80%; max-height:700px;">
-          <iframe width="100%" height="100%"
-            src="https://youtu.be/5cQ68zCqpKw?si=LyEONFFSKV6JG-c7"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen>
-          </iframe>
-        </div>
-      `;
+     popup.innerHTML = `
+  <div style="width:90%; max-width:1100px; height:80%; max-height:700px;">
+    <iframe width="100%" height="100%"
+      src="https://www.youtube.com/embed/${id}"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  </div>
+`;
 
       // hanya tutup saat klik di area gelap (bukan iframe)
       popup.addEventListener('click', (e)=>{
@@ -416,27 +414,66 @@
       });
     });
 
-    // CANVAS BINTANG (tidak mengganggu klik karena pointer-events:none)
-    (function(){
-      const canvas = document.createElement('canvas');
-      canvas.id = 'bintang';
-      canvas.style.position = 'fixed';
-      canvas.style.top = '0';
-      canvas.style.left = '0';
-      canvas.style.width = '100%';
-      canvas.style.height = '100%';
-      canvas.style.zIndex = '-1';
-      canvas.style.pointerEvents = 'none';
-      document.body.appendChild(canvas);
+   // CANVAS BINTANG
+(function(){
+  const canvas = document.createElement('canvas');
+  canvas.id = 'bintang';
+  canvas.style.position = 'fixed';
+  canvas.style.top = '0';
+  canvas.style.left = '0';
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
+  canvas.style.zIndex = '-1';
+  canvas.style.pointerEvents = 'none';
+  document.body.appendChild(canvas);
 
-      const ctx = canvas.getContext('2d');
-      let stars = [];
+  const ctx = canvas.getContext('2d');
+  let stars = [];
 
-      function resize(){
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        // regenerate stars to fit new size
-        stars = [];
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    stars = [];
+    for(let i=0;i<100;i++){
+      stars.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        r: Math.random()*2,
+        d: Math.random()*1
+      });
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="white";
+    stars.forEach(s=>{
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fill();
+    });
+    move();
+  }
+
+  function move(){
+    stars.forEach(s=>{
+      s.y += s.d;
+      if(s.y>canvas.height){
+        s.y=0;
+        s.x=Math.random()*canvas.width;
+      }
+    });
+  }
+
+  function animate(){
+    draw();
+    requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('resize',resize);
+  resize();
+  animate();
+})();
            
 </script></body></html>
 
@@ -446,4 +483,3 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
     <script>anchors.add();</script>
   </body>
-</html>
